@@ -20,5 +20,16 @@ INSERT INTO `Moods` VALUES (null, "Sad");
 INSERT INTO `Moods` VALUES (null, "Anxious");
 INSERT INTO `Moods` VALUES (null, "Angry");
 
-INSERT INTO `Entries` VALUES (null, "2021-04-15", "SQL", "bad python", 8);INSERT INTO `Entries` VALUES (null, "2021-04-15", "SQL", "bad python", 8);
+INSERT INTO `Entries` VALUES (null, "2021-04-15", "SQL", "bad python", 7);
+INSERT INTO `Entries` VALUES (null, "2021-04-15", "SQL", "bad python", 7);
 
+SELECT
+	e.id,
+	e.date,
+	e.concept,
+	e.entry,
+	e.mood_id,
+	m.mood mood
+FROM Entries e
+LEFT JOIN Moods m
+	ON m.id = e.mood_id

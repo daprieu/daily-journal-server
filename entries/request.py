@@ -1,3 +1,4 @@
+from models import Mood
 import sqlite3
 import json
 from models import Entry
@@ -17,10 +18,13 @@ def get_all_entries():
             e.date,
             e.concept,
             e.entry,
-            e.mood_id
-        FROM entries e
+            e.mood_id,
+            m.mood mood
+        FROM Entries e
+        LEFT JOIN Moods m
+            ON m.id = e.mood_id
         """)
-
+       
         # Initialize an empty list to hold all entry representations
         entries = []
 
@@ -37,6 +41,10 @@ def get_all_entries():
             entry = Entry(row['id'], row['date'], row['concept'],
                             row['entry'], row['mood_id'],
                             )
+            # Create a Mood instance from the current row                
+            mood = Mood(row['id'], row['mood'], )
+            # Add the dictionary representation of the mood to the entry
+            entry.mood = mood.__dict__
 
             entries.append(entry.__dict__)
 
@@ -69,3 +77,12 @@ def get_single_entry(id):
                     data['entry'], data['mood_id'])
 
         return json.dumps(entry.__dict__)
+
+def delete_entry(id):
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM entries
+        WHERE id = ?
+        """, (id, ))
