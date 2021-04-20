@@ -1,5 +1,6 @@
+from entries.request import create_entry
 import json
-from entries import get_all_entries, get_single_entry, delete_entry
+from entries import get_all_entries, get_single_entry, delete_entry, get_entry_by_search
 from moods import get_all_moods, get_single_mood
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -80,6 +81,12 @@ class HandleRequests(BaseHTTPRequestHandler):
                 else:
                     response = get_all_moods()
 
+        elif len(parsed) == 3:
+            ( resource, key, value ) = parsed
+
+            if key == "q" and resource == "entries":
+                response = get_entry_by_search(value)
+
         
 
         # This weird code sends a response back to the client
@@ -95,6 +102,33 @@ class HandleRequests(BaseHTTPRequestHandler):
         post_body = self.rfile.read(content_len)
         response = f"received post request:<br>{post_body}"
         self.wfile.write(response.encode())
+
+    # Here's a method on the class that overrides the parent's method.
+    # It handles any POST request.
+    def do_POST(self):
+        # Set response code to 'Created'
+        self._set_headers(201)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+
+        # Convert JSON string to a Python dictionary
+        post_body = json.loads(post_body)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Initialize new item
+        new_item = None
+
+        # Add a new animal to the list. Don't worry about
+        # the orange squiggle, you'll define the create_animal
+        # function next.
+        if resource == "entries":
+            new_item = create_entry(post_body)
+
+
+        # Encode the new animal and send in response
+        self.wfile.write(f"{new_item}".encode())
 
 
     # Here's a method on the class that overrides the parent's method.
