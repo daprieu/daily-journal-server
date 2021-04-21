@@ -33,3 +33,18 @@ SELECT
 FROM Entries e
 LEFT JOIN Moods m
 	ON m.id = e.mood_id
+
+CREATE TABLE `Tag` (
+	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `name` TEXT NOT NULL
+);
+
+CREATE TABLE `Entry_Tag` (
+	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `entry_id` INTEGER NOT NULL,
+	`tag_id` INTEGER NOT NULL,
+	FOREIGN KEY(`entry_id`) REFERENCES `Entries`(`id`),
+	FOREIGN KEY(`tag_id`) REFERENCES `Tag`(`id`)
+);
+
+INSERT INTO `Tag` VALUES (null, 'tag?');
